@@ -24,7 +24,7 @@ function! batter#window#CreateNewPluginWindow()
 
     s:pluginBuffer = bufnr("%")
 
-    let b:text = batter#tab#Content("")
+    let b:text = batter#tabcontent#GetBufferList("")
 
     setlocal modifiable
 
