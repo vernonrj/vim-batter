@@ -11,16 +11,15 @@ function! batter#buffers#GetBuffersForTab(tabnr)
     else
         return []
     endif
-    " return filter(buffers_for_tab, "buflisted(str2nr(v:key))")
 endfunction
 
 " Returns a dictionary describing the filtering method for this tab
 function! batter#buffers#GetFilterForTab(tabnr)
-    let filter_for_tab = gettabvar(a:tabnr, "BatterFilterForThisTab")
-    if type(filter_for_tab) != 4
-        unlet filter_for_tab
+    if !batter#buffers#IsFilterDefinedForTab(a:tabnr)
         let filter_for_tab = batter#filter#DefaultFilter()
         call batter#buffers#SetFilterForTab(a:tabnr, filter_for_tab)
+    else
+        let filter_for_tab = gettabvar(a:tabnr, "BatterFilterForThisTab")
     endif
     return filter_for_tab
 endfunction
@@ -29,8 +28,17 @@ function! batter#buffers#SetFilterForTab(tabnr, new_filter)
     call settabvar(a:tabnr, "BatterFilterForThisTab", a:new_filter)
 endfunction
 
+function! batter#buffers#IsFilterDefinedForTab(tabnr)
+    let filter_for_tab = gettabvar(a:tabnr, "BatterFilterForThisTab")
+    if type(filter_for_tab) != 4
+        return 0
+    else
+        return 1
+    endif
+endfunction
+
 function! batter#buffers#SetRegexForTab(tabnr, expression)
     let filter_for_tab = batter#buffers#GetFilterForTab(a:tabnr)
     call filter_for_tab.add_pattern(a:expression)
-    call settabvar(a:tabnr, "BatterFilterForThisTab", filter_for_tab)
+    call batter#buffers#SetFilterForTab(a:tabnr, filter_for_tab)
 endfunction

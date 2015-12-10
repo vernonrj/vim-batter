@@ -38,7 +38,7 @@ function! batter#window#EditFilterViaWindow()
     let s:pluginBuffer = bufnr("%")
 
     let current_filter = batter#buffers#GetFilterForTab(tabpagenr())
-    let current_exprs = current_filter.patterns
+    let current_exprs = current_filter.private.patterns
 
     if len(current_exprs) > 0
         silent! put! =current_exprs
@@ -59,4 +59,26 @@ function! s:WriteNewFilters(buffer_number)
     call current_filter.set_patterns(contents)
     setlocal nomodified
     call batter#buffers#SetFilterForTab(tabpagenr(), current_filter)
+endfunction
+
+function! batter#window#SaveFilters()
+    let filters = {}
+    for t in range(1, tabpagenr('$'))
+        if batter#buffers#IsFilterDefinedForTab(t)
+            let filters[t] = batter#buffers#GetFilterForTab(t).private
+        endif
+    endfor
+    let g:BATTER_SESSION = filters
+endfunction
+
+function! batter#window#LoadFilters()
+    if !exists('g:BATTER_SESSION')
+        return
+    endif
+    for [key, value] in items(g:BATTER_SESSION)
+        let f = batter#filter#DefaultFilter()
+        let f.private = value
+        call batter#buffers#SetFilterForTab(key, f)
+    endfor
+
 endfunction
