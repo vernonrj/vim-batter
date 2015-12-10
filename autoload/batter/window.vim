@@ -22,13 +22,13 @@ function! batter#window#CreateNewPluginWindow()
 	setlocal cc=
 	setlocal filetype=batter
 
-    s:pluginBuffer = bufnr("%")
+    let s:pluginBuffer = bufnr("%")
 
-    let b:text = batter#tabcontent#GetBufferList("")
+    let b:text = batter#buffers#GetBuffersForTab(tabpagenr())
 
     setlocal modifiable
 
-    if len(text) > 0
+    if len(b:text) > 0
         silent! put! =b:text
         normal! Gkj
     endif
@@ -39,9 +39,9 @@ endfunction
 
 function! batter#window#TogglePluginWindow()
     if batter#window#IsPluginWindowOpen()
-        batter#window#ClosePluginWindow()
+        call batter#window#ClosePluginWindow()
     else
-        batter#window#CreateNewPluginWindow()
+        call batter#window#CreateNewPluginWindow()
     endif
 endfunction
 
