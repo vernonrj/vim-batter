@@ -4,9 +4,9 @@ function! batter#window#CreateNewPluginWindow()
 
     let old_efm = &errorformat
     set errorformat=%f
-    cgetexpr batter#buffers#GetBuffersForTab(tabpagenr())
+    lgetexpr batter#buffers#GetBuffersForTab(tabpagenr())
     let &errorformat = old_efm
-    copen
+    lopen
 
 endfunction
 
