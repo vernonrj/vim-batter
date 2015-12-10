@@ -20,7 +20,17 @@ function! batter#buffers#GetFilterForTab(tabnr)
     if type(filter_for_tab) != 4
         unlet filter_for_tab
         let filter_for_tab = batter#filter#DefaultFilter()
-        call settabvar(a:tabnr, "BatterFilterForThisTab", filter_for_tab)
+        call batter#buffers#SetFilterForTab(a:tabnr, filter_for_tab)
     endif
     return filter_for_tab
+endfunction
+
+function! batter#buffers#SetFilterForTab(tabnr, new_filter)
+    call settabvar(a:tabnr, "BatterFilterForThisTab", a:new_filter)
+endfunction
+
+function! batter#buffers#SetRegexForTab(tabnr, expression)
+    let filter_for_tab = batter#buffers#GetFilterForTab(a:tabnr)
+    call filter_for_tab.add_pattern(a:expression)
+    call settabvar(a:tabnr, "BatterFilterForThisTab", filter_for_tab)
 endfunction

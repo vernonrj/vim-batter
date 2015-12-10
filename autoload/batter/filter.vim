@@ -4,6 +4,9 @@ function! batter#filter#DefaultFilter()
     function f.add_pattern(new_pattern)
         let self.patterns += [a:new_pattern]
     endfunction
+    function f.set_patterns(new_patterns)
+        let self.patterns = a:new_patterns
+    endfunction
     function f.apply_patterns_to(list_of_files)
         if len(self.patterns) == 0
             return a:list_of_files
