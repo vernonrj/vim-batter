@@ -32,6 +32,7 @@ function! batter#window#EditFilterViaWindow()
     silent! exe "noautocmd wincmd P"
     silent! exe "resize" (&lines / 3)
     setlocal modifiable noreadonly
+    setlocal noswapfile
 
 	setlocal filetype=batter
 
