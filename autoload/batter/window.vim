@@ -68,14 +68,14 @@ function! batter#window#SaveFilters()
             let filters[t] = batter#buffers#GetFilterForTab(t).private
         endif
     endfor
-    let g:BATTER_SESSION = filters
+    let g:BATTER_SESSION = webapi#json#encode(filters)
 endfunction
 
 function! batter#window#LoadFilters()
     if !exists('g:BATTER_SESSION')
         return
     endif
-    for [key, value] in items(g:BATTER_SESSION)
+    for [key, value] in items(webapi#json#decode(g:BATTER_SESSION))
         let f = batter#filter#DefaultFilter()
         let f.private = value
         call batter#buffers#SetFilterForTab(key, f)
