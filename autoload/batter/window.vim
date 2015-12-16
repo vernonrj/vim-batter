@@ -10,6 +10,14 @@ function! batter#window#CreateNewPluginWindow()
 
 endfunction
 
+function! batter#window#ShowUnmatchedFiles()
+    let old_efm = &errorformat
+    set errorformat=%f
+    lgetexpr batter#rules#AllUnmatchedBuffers()
+    let &errorformat = old_efm
+    lopen
+endfunction
+
 function! batter#window#TogglePluginWindow()
     if batter#window#IsPluginWindowOpen()
         call batter#window#ClosePluginWindow()

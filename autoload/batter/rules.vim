@@ -44,6 +44,25 @@ function! batter#rules#FilterBuffersWithRule(name)
     endif
 endfunction
 
+" Returns all buffers that do not match one of the defined rules
+function! batter#rules#AllUnmatchedBuffers()
+    let rules = values(batter#rules#GetAllRules())
+    let found_files = []
+    for each in s:AllBuffers()
+        let found_match = 0
+        for each_rule in rules
+            if match(each, each_rule) != -1
+                let found_match = 1
+                break
+            endif
+        endfor
+        if found_match == 0
+            let found_files += [each]
+        endif
+    endfor
+    return found_files
+endfunction
+
 function! batter#rules#SetRuleNameForTab(tab_number, rule_name)
     if !exists('s:BatterRules[a:rule_name]')
         echoerr "Rule '" . a:rule_name . "' doesn't exist!"
