@@ -1,6 +1,5 @@
-let s:pluginBuffer = -1
 
-function! batter#window#CreateNewPluginWindow()
+function! batter#window#ShowBuffersForTab()
 
     let old_efm = &errorformat
     set errorformat=%f
@@ -18,18 +17,28 @@ function! batter#window#ShowUnmatchedFiles()
     lopen
 endfunction
 
-function! batter#window#TogglePluginWindow()
-    if batter#window#IsPluginWindowOpen()
-        call batter#window#ClosePluginWindow()
-    else
-        call batter#window#CreateNewPluginWindow()
+function! batter#window#EditRule(rulename)
+    let value = batter#rules#GetRule(a:rulename)
+    if empty(value)
+        let value = a:rulename
+    endif
+    call inputsave()
+        echohl Question
+            let value = input('Input pattern to match: ', value)
+        echohl None
+    call inputrestore()
+    if empty(value)
+        return 0
+    endif
+    call batter#rules#SetRule(a:rulename, value)
+    if empty(batter#rules#GetRuleNameForTab(tabpagenr()))
+        call batter#rules#SetRuleNameForTab(tabpagenr(), a:rulename)
     endif
 endfunction
 
-function! batter#window#IsPluginWindowOpen()
-    return bufexists(s:pluginBuffer) && bufwinnr(s:pluginBuffer) != -1
+function! batter#window#SetTabRule(rulename)
+    call batter#rules#SetRuleNameForTab(tabpagenr(), a:rulename)
 endfunction
-
 
 function! batter#window#SaveFilters()
     let tab_assocs = {}
