@@ -18,13 +18,22 @@ function! batter#window#ShowUnmatchedFiles()
 endfunction
 
 function! batter#window#EditRule(rulename)
+    if empty(a:rulename)
+        let found_rule = batter#rules#GetRuleNameForTab(tabpagenr())
+        if empty(found_rule)
+            echoerr "No Rule defined for tab!"
+            return 0
+        else
+            return batter#window#EditRule(found_rule)
+        endif
+    endif
     let value = batter#rules#GetRule(a:rulename)
     if empty(value)
         let value = a:rulename
     endif
     call inputsave()
         echohl Question
-            let value = input('Input pattern to match: ', value)
+            let value = input('(' . a:rulename . '): Input pattern to match: ', value)
         echohl None
     call inputrestore()
     if empty(value)
@@ -38,6 +47,15 @@ endfunction
 
 function! batter#window#SetTabRule(rulename)
     call batter#rules#SetRuleNameForTab(tabpagenr(), a:rulename)
+endfunction
+
+function! batter#window#DeleteRule(rulename)
+    let tabs_using_rule = batter#rules#FindTabUsingRule(a:rulename)
+    if !empty(tabs_using_rule)
+        echoerr "Tabs . " string(tabs_using_rule) . " Are using rule '" . a:rulename . "'"
+        return 0
+    endif
+    call batter#rules#DeleteRule(a:rulename)
 endfunction
 
 function! batter#window#SaveFilters()

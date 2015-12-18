@@ -7,6 +7,10 @@ function! batter#rules#SetRule(name, value)
     let s:BatterRules[a:name] = a:value
 endfunction
 
+function! batter#rules#DeleteRule(name)
+    unlet s:BatterRules[a:name]
+endfunction
+
 function! batter#rules#GetRule(name)
     if !exists('s:BatterRules[a:name]')
         return ""
@@ -73,4 +77,14 @@ endfunction
 
 function! batter#rules#GetRuleNameForTab(tab_number)
     return gettabvar(a:tab_number, "BatterFilterForThisTab")
+endfunction
+
+function! batter#rules#FindTabUsingRule(rule_name)
+    let tabs_using_rule = []
+    for i in range(1, tabpagenr('$'))
+        if batter#rules#GetRuleNameForTab(i) == a:rule_name
+            let tabs_using_rule += [i]
+        endif
+    endfor
+    return tabs_using_rule
 endfunction
